@@ -15,7 +15,7 @@ trait UseVersionFile
      */
     public function versionFileExists(): bool
     {
-        return Storage::exists($this->versionFile);
+        return Storage::disk('updates')->exists($this->versionFile);
     }
 
     /**
@@ -23,7 +23,7 @@ trait UseVersionFile
      */
     public function setVersionFile(string $content): bool
     {
-        return Storage::put($this->versionFile, $content);
+        return Storage::disk('updates')->put($this->versionFile, $content);
     }
 
     /**
@@ -31,7 +31,7 @@ trait UseVersionFile
      */
     public function getVersionFile(): string
     {
-        return trim(Storage::get($this->versionFile));
+        return trim(Storage::disk('updates')->get($this->versionFile));
     }
 
     /**
@@ -39,6 +39,6 @@ trait UseVersionFile
      */
     public function deleteVersionFile(): bool
     {
-        return Storage::delete($this->versionFile);
+        return Storage::disk('updates')->delete($this->versionFile);
     }
 }

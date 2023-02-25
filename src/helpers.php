@@ -8,11 +8,18 @@ if (!\function_exists('dirsIntersect')) {
     /**
      * Check if files in one array (f.ex. directory) are also exist in a second one.
      *
+     * @param string $folder
      * @param array<string> $directory
      * @param array<string> $excludedDirs
+     * @return bool
      */
-    function dirsIntersect(array $directory, array $excludedDirs): bool
+    function dirsIntersect(string $folder, array $directory, array $excludedDirs): bool
     {
+        if ($directory) {
+            $directory = array_map(function ($item) use ($folder) {
+                return str_replace($folder . '/', '', $item);
+            }, $directory);
+        }
         return (bool) count(array_intersect($directory, $excludedDirs));
     }
 }

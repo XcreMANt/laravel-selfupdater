@@ -11,6 +11,7 @@ use Codedge\Updater\SourceRepositoryTypes\GiteaRepositoryType;
 use Codedge\Updater\SourceRepositoryTypes\GithubRepositoryType;
 use Codedge\Updater\SourceRepositoryTypes\GitlabRepositoryType;
 use Codedge\Updater\SourceRepositoryTypes\HttpRepositoryType;
+use Codedge\Updater\SourceRepositoryTypes\LocalRepositoryType;
 use Exception;
 use Illuminate\Foundation\Application;
 use InvalidArgumentException;
@@ -106,6 +107,11 @@ final class UpdaterManager implements UpdaterContract
     protected function createHttpRepository(): SourceRepositoryTypeContract
     {
         return $this->sourceRepository($this->app->make(HttpRepositoryType::class));
+    }
+
+    protected function createLocalRepository(): SourceRepositoryTypeContract
+    {
+        return $this->sourceRepository($this->app->make(LocalRepositoryType::class));
     }
 
     protected function createGiteaRepository(): SourceRepositoryTypeContract

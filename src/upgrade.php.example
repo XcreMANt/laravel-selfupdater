@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Support\Facades\File;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+
+function before(string $folder): bool
+{
+    $removable = [
+        'folders' => [
+            //
+        ],
+        'files' => [
+            //
+        ],
+    ];
+
+    // delete directories
+    $directories = (new Finder())->in($folder)->directories();
+
+    $sorted = collect($directories->sort(function (SplFileInfo $a, SplFileInfo $b) {
+        return strlen($b->getRealpath()) - strlen($a->getRealpath());
+    }));
+
+    $sorted->each(function (SplFileInfo $directory) use ($folder, $removable) {
+        if (dirsIntersect($folder, (array)$directory->getRealPath(), $removable['folders'])) {
+            File::deleteDirectory($directory->getRealPath());
+        }
+    });
+
+    // delete files
+    $files = (new Finder())->in($folder)->ignoreDotFiles(false)->files();
+
+    collect($files)->each(function (SplFileInfo $file) use ($folder, $removable) {
+        if (dirsIntersect($folder, (array)$file->getRealPath(), $removable['files'])) {
+            File::delete($file->getRealPath());
+        }
+    });
+
+    return true;
+}
+
+function after(): bool
+{
+	return true;
+}

@@ -40,6 +40,12 @@ return [
     */
 
     'repository_types' => [
+        'local' => [
+            'type'                 => 'local',
+            'repository_url'       => env('SELF_UPDATER_REPO_URL', storage_path('self-update')),
+            'download_path'        => env('SELF_UPDATER_DOWNLOAD_PATH', storage_path('self-update/tmp')),
+            'pkg_filename_format'  => env('SELF_UPDATER_PKG_FILENAME_FORMAT', 'v_VERSION_'),
+        ],
         'github' => [
             'type'                 => 'github',
             'repository_vendor'    => env('SELF_UPDATER_REPO_VENDOR', ''),
@@ -90,10 +96,11 @@ return [
         'bootstrap/cache',
         'bower',
         'storage/app',
+        'storage/api-docs',
         'storage/framework',
         'storage/logs',
         'storage/self-update',
-        'vendor',
+//        'vendor',
     ],
 
     /*
@@ -144,20 +151,30 @@ return [
 
     /*
     |---------------------------------------------------------------------------
+    | Script's filename called during the update
+    |---------------------------------------------------------------------------
+    */
+
+    'script_filename' => 'upgrade.php',
+
+    /*
+    |---------------------------------------------------------------------------
     | Register custom artisan commands
     |---------------------------------------------------------------------------
     */
 
     'artisan_commands' => [
         'pre_update' => [
-            //'command:signature' => [
-            //    'class' => Command class
-            //    'params' => []
-            //]
+            'updater:before' => [
+//                'class' => \App\Console\Commands\PreUpdateTasks::class,
+//                'params' => []
+            ],
         ],
         'post_update' => [
-
+            'updater:after' => [
+//                'class' => \App\Console\Commands\PostUpdateTasks::class,
+//                'params' => []
+            ],
         ],
     ],
-
 ];

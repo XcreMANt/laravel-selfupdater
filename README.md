@@ -15,6 +15,7 @@ functionality for your Laravel application.
 -   GitHub
 -   Gitlab
 -   Gitea
+-   Local storage
 -   Http-based archives
 
 Usually you need this when distributing a self-hosted Laravel application
@@ -25,7 +26,7 @@ that needs some updating mechanism without [Composer](https://getcomposer.org/).
 To install the latest version from the master using [Composer](https://getcomposer.org/):
 
 ```sh
-$ composer require codedge/laravel-selfupdater
+$ composer require xcremant/laravel-selfupdater
 ```
 
 ## Configuration
@@ -78,6 +79,10 @@ Artisan commands can be run before or after the update process and can be config
     ]
 ]
 ```
+### Upgrade Script (optional)
+
+You can create a PHP file named `upgrade.php` to perform custom actions (e.g. create a new table in the database or remove directories/files from target app).
+This file must contain a functions named `before()` and `after()` with a boolean return (to pass the status of its execution to LaraUpdater), see this example:
 
 ### Configure the download path
 
@@ -113,6 +118,8 @@ To start an update process, i. e. in a controller, just use:
 ```php
 Route::get('/', function (\Codedge\Updater\UpdaterManager $updater) {
 
+    $updater->source()->preUpdateArtisanCommands();
+
     // Check if new version is available
     if($updater->source()->isNewVersionAvailable()) {
 
@@ -127,15 +134,27 @@ Route::get('/', function (\Codedge\Updater\UpdaterManager $updater) {
 
         // Run the update process
         $updater->source()->update($release);
+        
+        // Set new version in .env
+        $updater->source()->setNewVersion($versionAvailable);
 
     } else {
         echo "No new version available.";
     }
+    
+    $updater->source()->postUpdateArtisanCommands();
 
 });
 ```
+or
 
-Currently, the fetching of the source is a _synchronous_ process. It is not run in background.
+```php
+Route::get('/', function (\Codedge\Updater\UpdaterManager $updater) {
+
+    dispatch(new UpdateJob());
+
+});
+```
 
 ### Using GitHub
 
@@ -206,6 +225,21 @@ The archive URL should contain nothing more than a simple directory listing with
 `SELF_UPDATER_PKG_FILENAME_FORMAT` contains the filename format for all webapp update packages. I.e. when the update packages listed on the archive URL contain names like `webapp-v1.2.0.zip`, `webapp-v1.3.5.zip`, ... then the format should be `webapp-v_VERSION_`. The `_VERSION_` part is used as semantic versionioning variable for `MAJOR.MINOR.PATCH` versioning. The zip-extension is automatically added.
 
 The target archive files must be zip archives and should contain all files on root level, not within an additional folder named like the archive itself.
+
+### Using LOCAL archives
+
+To run with LOCAL archives, use following settings in your `.env` file:
+
+| Config name                      | Value / Description                                   |
+| -------------------------------- | ----------------------------------------------------- |
+| SELF_UPDATER_SOURCE              | `local`                                               |
+| SELF_UPDATER_REPO_URL            | Archive URL, `storage_path('self-update')` by default |
+| SELF_UPDATER_PKG_FILENAME_FORMAT | Zip package filename format                           |
+
+`SELF_UPDATER_PKG_FILENAME_FORMAT` contains the filename format for all webapp update packages. I.e. when the update packages listed on the archive URL contain names like `webapp-v1.2.0.zip`, `webapp-v1.3.5.zip`, ... then the format should be `webapp-v_VERSION_`. The `_VERSION_` part is used as semantic versionioning variable for `MAJOR.MINOR.PATCH` versioning. The zip-extension is automatically added.
+
+The target archive files must be zip archives and should contain all files on root level, not within an additional folder named like the archive itself.
+
 
 ### Using Gitea
 

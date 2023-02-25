@@ -112,4 +112,27 @@ final class SourceRepository implements SourceRepositoryTypeContract
 
         return $commands->count();
     }
+
+    /**
+     * Set the new version in .env file
+     *
+     * @param string $version
+     */
+    public function setNewVersion(string $version)
+    {
+        $path = base_path('.env');
+//
+//        preg_replace(
+//            "s/^SELF_UPDATER_VERSION_INSTALLED=.*/g",
+//            "SELF_UPDATER_VERSION_INSTALLED=$version",
+//            file_get_contents($path)
+
+        if (file_exists($path)) {
+            file_put_contents($path, preg_replace(
+                '/SELF_UPDATER_VERSION_INSTALLED=.*/',
+                "SELF_UPDATER_VERSION_INSTALLED=$version",
+                file_get_contents($path)
+            ));
+        }
+    }
 }
