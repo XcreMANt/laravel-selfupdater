@@ -21,8 +21,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/codedge/laravel-selfupdater/issues",
-        "source": "https://github.com/codedge/laravel-selfupdater"
+        "issues": "https://github.com/xcremant/laravel-selfupdater/issues",
+        "source": "https://github.com/xcremant/laravel-selfupdater"
     },
     "require": {
         "php": "^8",
