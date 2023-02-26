@@ -21,8 +21,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/xcremant/laravel-selfupdater/issues",
-        "source": "https://github.com/xcremant/laravel-selfupdater"
+        "issues": "https://github.com/XcreMANt/laravel-selfupdater/issues",
+        "source": "https://github.com/XcreMANt/laravel-selfupdater"
     },
     "require": {
         "php": "^8",
